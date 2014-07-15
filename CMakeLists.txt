@@ -1,0 +1,132 @@
+# ====================================================================== #
+# CMake Build Script                                		          	 #
+# Copyright (C) 2013-2014 Miguel Martin (miguel@miguel-martin.com)    	 #
+# ====================================================================== #
+
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
+# ======================== #
+# Set Project Version/Name #
+# ======================== #
+
+project (TYPE_ALIGNED_CONTAINER)
+
+set(LIBRARY_NAME "type_aligned_container")
+
+# ================= #
+# Build Option      #
+# ================= #
+
+# export the compilation flags that we use;
+# namely for editing with Vim + YouCompleteMe
+set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
+
+# set the module path
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+
+# default to a debug build if no CMAKE_BUILD_TYPE is defined
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to 'Debug' as none was specified.")
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
+
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+        "MinSizeRel" "RelWithDebInfo")
+endif()
+
+# if the user did not specify an output directory
+# for libraries then we will use "lib" as the output
+if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    message(STATUS "Setting library output directory")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
+endif()
+
+# Options for library
+set(INSTALL_HEADERS true CACHE BOOL "Enable to install header files")
+set(BUILD_DOCS false CACHE BOOL "Enable to build documentation")
+set(BUILD_EXAMPLES true CACHE BOOL "Enable to build the examples")
+set(BUILD_BENCMARK true CACHE BOOL "Enable to build benchmarks"
+set(BUILD_TESTS true CACHE BOOL "Enable to build unit tests")
+
+# Add include directories
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Determine if we're building a shared (dynamic) library
+# And set appropriate suffixes for the executables
+if(BUILD_SHARED_LIBS)
+    set(CMAKE_DEBUG_POSTFIX "_d")
+else()
+    add_definitions(-DSTATIC_LIB)
+    set(CMAKE_DEBUG_POSTFIX "_d_s")
+    set(CMAKE_RELEASE_POSTFIX "_s")
+endif()
+
+
+# ========== #
+# Building 	 #
+# ========== #
+
+# Make sure we're compiling with C++11
+# NOTE: MSVC has different flag to this obviously
+if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
+# Check if were compiling with clang, if we are, we need
+# to add "-stdlib=libc++" to the command line in order for it to compile
+if(CMAKE_CXX_COMPILER MATCHES ".*clang[+][+]" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # Note: on some platforms (OS X), CMAKE_COMPILER_IS_GNUCXX is true even when CLANG is used
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
+
+# Build tests if we need to
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
+if(BUILD_DOCS)
+    find_package(Doxygen)
+    if(NOT DOXYGEN_FOUND)
+        message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+    endif()
+
+    set(doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in )
+    set(doxyfile             ${PROJECT_BINARY_DIR}/Doxyfile              )
+    set(doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
+    set(doxy_output_root     ${CMAKE_CURRENT_BINARY_DIR}                 ) # Pasted into Doxyfile.in
+    set(doxy_input           ${PROJECT_SOURCE_DIR}/src                   ) # Pasted into Doxyfile.in
+
+    configure_file(${doxyfile_in} ${doxyfile} @ONLY)
+
+    add_custom_command  (OUTPUT ${doxy_html_index_file}
+                                COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+                                # The following should be ${doxyfile} only but it
+                                # will break the dependency.
+                                # The optimal solution would be creating a 
+                                # custom_command for ${doxyfile} generation
+                                # but I still have to figure out how...
+                                MAIN_DEPENDENCY ${doxyfile} ${doxyfile_in}
+                                COMMENT "Generating HTML documentation")
+
+    add_custom_target(doc ALL DEPENDS ${doxy_html_index_file})
+
+    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
+endif()
+
+# ====================== #
+# Installation	 	     #
+# ====================== #
+
+# Headers for the library
+if(INSTALL_HEADERS)
+    install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
+        DESTINATION .
+        FILES_MATCHING PATTERN "*.hpp"
+        )
+endif()
