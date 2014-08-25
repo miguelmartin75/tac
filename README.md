@@ -22,7 +22,7 @@ struct A {};
 struct B {};
 struct C {};
 
-tac::type_aligned_container_dyn<A, B, C> container;
+tac::type_aligned_container_dyn<> container;
 container.add<A>();
 container.add<B>();
 container.add<C>();
