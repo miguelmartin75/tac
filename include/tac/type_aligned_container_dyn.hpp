@@ -7,14 +7,10 @@
 
 #include <tac/detail/type_id.hpp>
 #include <tac/detail/default_type_id_generator.hpp>
+#include <tac/detail/default_aligned_container.hpp>
 
 namespace tac
 {
-    namespace detail
-    {
-        template <typename T>
-        using default_aligned_container = std::vector<T>;
-    }
 
     /// \brief A container that will align it's contents by type (dynamically).
     /// 
