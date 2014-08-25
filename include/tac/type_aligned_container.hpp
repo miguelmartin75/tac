@@ -20,7 +20,7 @@ namespace tac
     struct type_aligned_container
     {
         template <typename T>
-        using aligned_container = default_aligned_container<T>;
+        using aligned_container = detail::default_aligned_container<T>;
 
         enum : std::size_t
         {
@@ -31,7 +31,7 @@ namespace tac
         template <typename T, typename... Args>
         void add(Args&&... args)
         {
-            all<T>.emplace_back(std::forward<Args>(args)...);
+            all<T>().emplace_back(std::forward<Args>(args)...);
         }
 
         /// Retrieves all objects of type T within the container
@@ -40,7 +40,7 @@ namespace tac
         template <typename T>
         aligned_container<T>& all()
         {
-            return std::get<aligned_container<T>>(m_containers)
+            return std::get<aligned_container<T>>(m_containers);
         }
 
         template <typename T>
@@ -52,27 +52,41 @@ namespace tac
         template <typename F>
         void for_all(F f)
         {
-            impl_tuple_for_each(m_containers, f);
+            impl_tuple_for_each(m_containers, for_all_functor_impl<F>{f});
         }
 
         /// Clears the container
         void clear()
         {
-            impl_tuple_for_each(m_containers, clear_container_functor());
+            impl_tuple_for_each(m_containers, clear_container_functor_impl());
         }
 
     private:
 
-        struct clear_container_functor
+        template <typename F>
+        struct for_all_functor_impl
         {
             template <typename T>
-            void operator(T& container)()
+            void operator()(T& container)
+            {
+                for(auto& x : container)
+                {
+                    f(x);
+                }
+            }
+            F f;
+        };
+
+        struct clear_container_functor_impl
+        {
+            template <typename T>
+            void operator()(T& container)
             {
                 container.clear();
             }
         };
 
-        template<typename F f, std::size_t I = 0, typename... Tp>
+        template<typename F, std::size_t I = 0, typename... Tp>
         typename std::enable_if<I == sizeof...(Tp), void>::type
         impl_tuple_for_each(std::tuple<Tp...>& t, F f)
         { }
@@ -81,13 +95,13 @@ namespace tac
         typename std::enable_if<I < sizeof...(Tp), void>::type
         impl_tuple_for_each(std::tuple<Tp...>& t, F f)
         {
-            f(t);
-            impl_tuple_for_each<I + 1, Tp...>(t);
+            f(std::get<I>(t));
+            impl_tuple_for_each<F, I + 1, Tp...>(t, f);
         }
 
 
         /// the containers for all the types
-        detail::tuple_converter<aligned_container>::tuple m_containers;
+        typename detail::tuple_converter<aligned_container>::template tuple<Types...> m_containers;
     };
 
 }
