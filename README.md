@@ -1,6 +1,6 @@
 # tac
 
-**t**ype_**a**ligned_**c**ontainer; a generic container adapter that stores unique types contiguously.
+type_aligned_container; a generic container adapter that stores unique types contiguously.
 
 # Example
 
