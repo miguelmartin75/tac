@@ -5,8 +5,8 @@
 #include <utility>
 #include <memory>
 
-#include "type_id.hpp"
-#include "default_type_id_generator.hpp"
+#include <tac/detail/type_id.hpp>
+#include <tac/detail/default_type_id_generator.hpp>
 
 template <typename T>
 using default_aligned_container = std::vector<T>;
