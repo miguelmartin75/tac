@@ -2,10 +2,14 @@
 #define TYPE_ALIGNED_CONTAINER_DYN_HPP
 
 #include <vector>
+#include <utility>
 #include <memory>
 
 #include "type_id.hpp"
 #include "default_type_id_generator.hpp"
+
+template <typename T>
+using default_aligned_container = std::vector<T>;
 
 /// \brief A container that will align it's contents by type (dynamically).
 /// 
@@ -14,39 +18,46 @@
 /// 
 /// \tparam TypeIdGenerator The type_id generator (defaults to default_type_id_generator)
 /// \tparam AlignedContainer The container type (defaults to std::vector<T>)
-template <typename TypeIdGenerator = default_type_id_generator, template<typename T> typename AlignedContainer = std::vector<T>>
+template <typename TypeIdGenerator = default_type_id_generator, template<typename T> class AlignedContainer = default_aligned_container>
 class type_aligned_container_dyn
 {
 private:
 
-    struct base_aligned_container
+    struct base_aligned_container_impl
     {
-        virtual ~base_aligned_alocator();
+        virtual ~base_aligned_container_impl() { }
     };
 
     template <typename T>
-    struct aligned_container : public base_aligned_alocator
+    struct aligned_container_impl : base_aligned_container_impl
     {
+        virtual ~aligned_container_impl() { }
         AlignedContainer<T> container;
     };
 
 public:
 
     template <typename T>
-    using aligned_container = AlignedContainer;
+    using aligned_container = AlignedContainer<T>;
 
-    /// Adds 
-    template <typename T>
-    void add()
+    /// Adds an object of type T
+    template <typename T, typename... Args>
+    void add(Args&&... args)
     {
-        auto typeId = get_type_id(type_id_generator);
-        // resize if we need to
+        static const auto typeId = get_type_id<T>(m_type_id_generator);
+
+        // if we need to add a container to hold the type...
+        // then add it...
         if(m_containers.size() <= typeId) 
         {
+            // resize to hold it
             m_containers.resize(typeId + 1);
+            // now assign the container to be of the right type
+            m_containers[typeId].reset(new aligned_container_impl<T>);
         }
 
-        m_containers[typeId].reset(new aligned_alocator<T>);
+        // add the object...
+        all<T>().emplace_back(std::forward<Args>(args)...);
     }
 
     /// Retrieves all objects of type T within the container
@@ -55,13 +66,13 @@ public:
     template <typename T>
     aligned_container<T>& all()
     {
-        return *static_cast<array_type<T>*>(m_containers[get_type_id<T>()]);
+        return static_cast<aligned_container_impl<T>*>(m_containers[get_type_id<T>(m_type_id_generator)].get())->container;
     }
 
     template <typename T>
     const aligned_container<T>& all() const
     {
-        return *static_cast<array_type<T>*>(m_containers[get_type_id<T>()]);
+        return static_cast<aligned_container_impl<T>*>(m_containers[get_type_id<T>(m_type_id_generator)].get())->container;
     }
     
     /// Clears the container
@@ -82,13 +93,14 @@ public:
         auto& c = all<T>();
         for(auto& i : c)
         {
-            F(i);
+            f(i);
         }
     }
 
 private:
 
-    ArrayType<base_aligned_container> m_containers;
+    TypeIdGenerator m_type_id_generator;
+    aligned_container<std::unique_ptr<base_aligned_container_impl>> m_containers;
 };
 
 

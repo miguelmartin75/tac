@@ -7,16 +7,27 @@ class default_type_id_generator
 {
 public:
 
+    default_type_id_generator() 
+        : m_nextTypeId(0) 
+    {
+    }
+
     template <typename T>
-    type_id operator()()
+    type_id generate()
     {
         return m_nextTypeId++;
     }
 
-    static type_id m_nextTypeId;
+    type_id last_id_given()
+    {
+        return m_nextTypeId - 1;
+    }
+
+private:
+
+    type_id m_nextTypeId;
 };
 
-type_id default_type_id_generator::m_nextTypeId = 0;
 
 
 

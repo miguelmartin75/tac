@@ -5,10 +5,10 @@
 
 typedef std::size_t type_id;
 
-template <typename TypeIdGenerator, typename T>
-type_id get_type_id()
+template <typename T, typename TypeIdGenerator>
+type_id get_type_id(TypeIdGenerator generator)
 {
-    static const type_id id = TypeIdGenerator<T>();
+    static const type_id id = generator.template generate<T>();
     return id;
 }
 
