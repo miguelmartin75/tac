@@ -1,7 +1,7 @@
 #ifndef DEFAULT_TYPE_ID_GENERATOR_HPP
 #define DEFAULT_TYPE_ID_GENERATOR_HPP
 
-#include "typeid.hpp"
+#include "type_id.hpp"
 
 class default_type_id_generator
 {
