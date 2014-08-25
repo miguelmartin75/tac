@@ -4,23 +4,26 @@
 #include <cstddef>
 #include <vector>
 
-/// \brief A container that will align it's contents by type.
-/// 
-/// You can think of a type_aligned_container as basically, converting
-/// tuple<T1, T2, ..., Tn> to tuple<vector<T1>, vector<T2>, ..., vector<Tn>>.
-/// 
-/// \tparam Types The types you wish this container to store
-template <typename... Types>
-struct type_aligned_container
+namespace tac
 {
-    enum : std::size_t
+    /// \brief A container that will align it's contents by type.
+    /// 
+    /// You can think of a type_aligned_container as basically, converting
+    /// tuple<T1, T2, ..., Tn> to tuple<vector<T1>, vector<T2>, ..., vector<Tn>>.
+    /// 
+    /// \tparam Types The types you wish this container to store
+    template <typename... Types>
+    struct type_aligned_container
     {
-        AMOUNT_OF_TYPES = sizeof...(Types)
-    };
+        enum : std::size_t
+        {
+            AMOUNT_OF_TYPES = sizeof...(Types)
+        };
 
-private:
-    
-    // TODO
-};
+    private:
+
+       // TODO
+    };
+}
 
 #endif // TYPE_ALIGNED_CONTAINER_HPP
