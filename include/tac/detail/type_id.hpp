@@ -1,5 +1,5 @@
-#ifndef TYPE_ID_HPP
-#define TYPE_ID_HPP
+#ifndef TAC_DETAIL_TYPE_ID_HPP
+#define TAC_DETAIL_TYPE_ID_HPP
 
 #include <cstddef> // for size_t
 
@@ -13,9 +13,10 @@ namespace tac
         type_id get_type_id(TypeIdGenerator generator)
         {
             static const type_id id = generator.template generate<T>();
+            
             return id;
         }
     }
 }
 
-#endif // TYPE_ID_HPP
+#endif // TAC_DETAIL_TYPE_ID_HPP

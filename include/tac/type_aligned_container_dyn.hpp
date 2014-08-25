@@ -1,5 +1,5 @@
-#ifndef TYPE_ALIGNED_CONTAINER_DYN_HPP
-#define TYPE_ALIGNED_CONTAINER_DYN_HPP
+#ifndef TAC_TYPE_ALIGNED_CONTAINER_DYN_HPP
+#define TAC_TYPE_ALIGNED_CONTAINER_DYN_HPP
 
 #include <vector>
 #include <utility>
@@ -104,4 +104,4 @@ namespace tac
 
 }
 
-#endif // TYPE_ALIGNED_CONTAINER_DYN_HPP
+#endif // TAC_TYPE_ALIGNED_CONTAINER_DYN_HPP
