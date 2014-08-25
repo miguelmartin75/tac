@@ -17,4 +17,4 @@ container.add<C>();
 
 # License
 
-See [[LICENSE]].
+See [LICENSE](LICENSE).
