@@ -65,10 +65,10 @@ int main(int argc, char *argv[])
         F f;
     };
 
-    std::cout << "Doing benchmark with: " << AMOUNT_OF_ABCS_TO_MAKE << " amount of ABC's\n\n";
+    std::cout << "Doing benchmark with: " << AMOUNT_OF_ABCS_TO_MAKE << " amount of ABCEF's\n\n";
 
 
-    std::cout << "testing type_aligned_container<A, B, C>...\n";
+    std::cout << "testing type_aligned_container<A, B, C, E, F>...\n";
     {
         tac::type_aligned_container<A, B, C, E, F> cont; 
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
             auto t2 = GetTimeNow();
 
             std::cout << "Took: " << t2 - t1 << " seconds ";
-            std::cout << "to alloc for type_aligned_container<A, B, C>\n";
+            std::cout << "to alloc for type_aligned_container.\n";
         }
 
         {
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
                 timeToPerformOnDataSet2 = t2 - t1;
 
                 std::cout << "Took: " << timeToPerformOnDataSet2 << " seconds ";
-                std::cout << "to perform operations on data set 1 for type_aligned_container.\n";
+                std::cout << "to perform operations on data set 2 for type_aligned_container.\n";
             }
 
             std::cout << "Total time: " << timeToPerformOnDataSet1 + timeToPerformOnDataSet2 << " seconds.\n"; 
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
             auto t2 = GetTimeNow();
 
             std::cout << "Took: " << t2 - t1 << " seconds ";
-            std::cout << "to alloc for vector<ABC>\n";
+            std::cout << "to alloc for vector.\n";
         }
 
         {
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
                 timeToPerformOnDataSet2 = t2 - t1;
 
                 std::cout << "Took: " << timeToPerformOnDataSet2 << " seconds ";
-                std::cout << "to perform operations on data set 1 for vector.\n";
+                std::cout << "to perform operations on data set 2 for vector.\n";
             }
 
             std::cout << "Total time: " << timeToPerformOnDataSet1 + timeToPerformOnDataSet2 << " seconds.\n";
