@@ -27,13 +27,6 @@ namespace tac
             AMOUNT_OF_TYPES = sizeof...(Types)
         };
 
-        /// Adds an object of type T
-        template <typename T, typename... Args>
-        void add(Args&&... args)
-        {
-            all<T>().emplace_back(std::forward<Args>(args)...);
-        }
-
         /// Retrieves all objects of type T within the container
         /// \tparam T The type of object you wish to retrieve
         /// \return An array of all of T within the container

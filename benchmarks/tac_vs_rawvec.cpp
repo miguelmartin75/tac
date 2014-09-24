@@ -76,11 +76,11 @@ int main(int argc, char *argv[])
             auto t1 = GetTimeNow();
             for (unsigned i = 0u; i < AMOUNT_OF_ABCS_TO_MAKE; ++i)
             {
-                cont.add<A>();
-                cont.add<B>();
-                cont.add<C>();
-                cont.add<E>();
-                cont.add<F>();
+                cont.all<A>().emplace_back();
+                cont.all<B>().emplace_back();
+                cont.all<C>().emplace_back();
+                cont.all<E>().emplace_back();
+                cont.all<F>().emplace_back();
             }
             auto t2 = GetTimeNow();
 

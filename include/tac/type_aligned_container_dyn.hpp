@@ -41,26 +41,6 @@ namespace tac
         template <typename T>
         using aligned_container = AlignedContainer<T>;
 
-        /// Adds an object of type T
-        template <typename T, typename... Args>
-        void add(Args&&... args)
-        {
-            static const auto typeId = detail::get_type_id<T>(m_type_id_generator);
-
-            // if we need to add a container to hold the type...
-            // then add it...
-            if(m_containers.size() <= typeId) 
-            {
-                // resize to hold it
-                m_containers.resize(typeId + 1);
-                // now assign the container to be of the right type
-                m_containers[typeId].reset(new aligned_container_impl<T>);
-            }
-
-            // add the object...
-            all<T>().emplace_back(std::forward<Args>(args)...);
-        }
-
         /// Retrieves all objects of type T within the container
         /// \tparam T The type of object you wish to retrieve
         /// \return An array of all of T within the container
