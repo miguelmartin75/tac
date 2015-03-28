@@ -36,12 +36,12 @@ int main(int argc, char *argv[])
 
     for (unsigned i = 0u; i < AMOUNT_OF_A_TO_ADD; ++i)
     {
-        container.add<A>();
+        container.all<A>().emplace_back();
     }
 
     for (unsigned i = 0u; i < AMOUNT_OF_B_TO_ADD; ++i)
     {
-        container.add<B>();
+        container.all<B>().emplace_back();
     }
 
     container.for_all(printer());
