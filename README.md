@@ -19,9 +19,9 @@ struct B {};
 struct C {};
 
 tac::type_aligned_container<A, B, C> container;
-container.all<A>.emplace_back();
-container.all<B>.emplace_back();
-container.all<C>.emplace_back();
+container.all<A>().emplace_back();
+container.all<B>().emplace_back();
+container.all<C>().emplace_back();
 ```
 
 ## type_aligned_container_dyn
@@ -38,9 +38,9 @@ struct B {};
 struct C {};
 
 tac::type_aligned_container_dyn<> container;
-container.all<A>.emplace_back();
-container.all<B>.emplace_back();
-container.all<C>.emplace_back();
+container.all<A>().emplace_back();
+container.all<B>().emplace_back();
+container.all<C>().emplace_back();
 ```
 
 # License
