@@ -64,9 +64,75 @@ int main(int argc, char *argv[])
         E e;
         F f;
     };
-
+    
     std::cout << "Doing benchmark with: " << AMOUNT_OF_ABCS_TO_MAKE << " amount of ABCEF's\n\n";
 
+    std::cout << "testing vector<ABCEF>...\n";
+    {
+        std::vector<ABCEF> cont;
+
+        {
+            auto t1 = GetTimeNow();
+            for (unsigned i = 0u; i < AMOUNT_OF_ABCS_TO_MAKE; ++i)
+            {
+                cont.emplace_back();
+            }
+            auto t2 = GetTimeNow();
+
+            std::cout << "Took: " << t2 - t1 << " seconds ";
+            std::cout << "to alloc for vector.\n";
+        }
+
+        {
+            cont[0].a.x = 6;
+            cont[0].b.y = 2;
+            cont[0].c.z = 3;
+
+            cont[0].e.x = 3;
+            cont[0].e.c = 'e';
+
+            cont[0].f.f = 100000;
+
+            Seconds timeToPerformOnDataSet1;
+            Seconds timeToPerformOnDataSet2;
+        
+            std::cout << "crunching data set 1 {A, B, C}\n";
+            {
+                auto t1 = GetTimeNow();
+                for (unsigned i = 0u; i < cont.size(); ++i)
+                {
+                    auto temp = cont[i].b.y * cont[i].c.z;
+                    cont[i].a.x = temp * temp * temp;
+                }
+                auto t2 = GetTimeNow();
+
+                timeToPerformOnDataSet1 = t2 - t1;
+
+                std::cout << "Took: " << timeToPerformOnDataSet1 << " seconds ";
+                std::cout << "to perform operations on data set 1 for vector.\n";
+            }
+
+            std::cout << "crunching data set 2 {E, F}\n";
+            {
+                auto t1 = GetTimeNow();
+                for (unsigned i = 0u; i < cont.size(); ++i)
+                {
+                    auto temp = cont[i].e.x * cont[i].e.c;
+                    cont[i].f.f = temp * temp * temp;
+                }
+                auto t2 = GetTimeNow();
+
+                timeToPerformOnDataSet2 = t2 - t1;
+
+                std::cout << "Took: " << timeToPerformOnDataSet2 << " seconds ";
+                std::cout << "to perform operations on data set 2 for vector.\n";
+            }
+
+            std::cout << "Total time: " << timeToPerformOnDataSet1 + timeToPerformOnDataSet2 << " seconds.\n";
+        }
+    }
+    
+    std::cout << '\n';
 
     std::cout << "testing type_aligned_container<A, B, C, E, F>...\n";
     {
@@ -138,72 +204,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    std::cout << '\n';
 
-    std::cout << "testing vector<ABCEF>...\n";
-    {
-        std::vector<ABCEF> cont;
-
-        {
-            auto t1 = GetTimeNow();
-            for (unsigned i = 0u; i < AMOUNT_OF_ABCS_TO_MAKE; ++i)
-            {
-                cont.emplace_back();
-            }
-            auto t2 = GetTimeNow();
-
-            std::cout << "Took: " << t2 - t1 << " seconds ";
-            std::cout << "to alloc for vector.\n";
-        }
-
-        {
-            cont[0].a.x = 6;
-            cont[0].b.y = 2;
-            cont[0].c.z = 3;
-
-            cont[0].e.x = 3;
-            cont[0].e.c = 'e';
-
-            cont[0].f.f = 100000;
-
-            Seconds timeToPerformOnDataSet1;
-            Seconds timeToPerformOnDataSet2;
-        
-            std::cout << "crunching data set 1 {A, B, C}\n";
-            {
-                auto t1 = GetTimeNow();
-                for (unsigned i = 0u; i < cont.size(); ++i)
-                {
-                    auto temp = cont[i].b.y * cont[i].c.z;
-                    cont[i].a.x = temp * temp * temp;
-                }
-                auto t2 = GetTimeNow();
-
-                timeToPerformOnDataSet1 = t2 - t1;
-
-                std::cout << "Took: " << timeToPerformOnDataSet1 << " seconds ";
-                std::cout << "to perform operations on data set 1 for vector.\n";
-            }
-
-            std::cout << "crunching data set 2 {E, F}\n";
-            {
-                auto t1 = GetTimeNow();
-                for (unsigned i = 0u; i < cont.size(); ++i)
-                {
-                    auto temp = cont[i].e.x * cont[i].e.c;
-                    cont[i].f.f = temp * temp * temp;
-                }
-                auto t2 = GetTimeNow();
-
-                timeToPerformOnDataSet2 = t2 - t1;
-
-                std::cout << "Took: " << timeToPerformOnDataSet2 << " seconds ";
-                std::cout << "to perform operations on data set 2 for vector.\n";
-            }
-
-            std::cout << "Total time: " << timeToPerformOnDataSet1 + timeToPerformOnDataSet2 << " seconds.\n";
-        }
-    }
 
     return 0;
 }
